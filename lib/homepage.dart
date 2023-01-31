@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todoapp/categorymodel.dart';
 import 'package:todoapp/notemodel.dart';
+
+final categoryProvider = Provider<List<CategoryModel>>((ref) => CategoryModel.getCategories);
+
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -97,39 +101,42 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class CategoryCard extends StatelessWidget {
+class CategoryCard extends ConsumerWidget {
   final int index;
+
   const CategoryCard({
     super.key, required this.index
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categories = ref.watch(categoryProvider);
+
     return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(right: 20),
-          width: 250,
-          height: 150,
-          decoration: BoxDecoration(
-            color: MyColors().darkBlue,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text('${CategoryModel.getCategories[index].taskCount.toString()} tasks',style: TextStyle(color: MyColors().foregroundBlue.withOpacity(.6),fontSize: 18),),
-                Text(CategoryModel.getCategories[index].title ,style: TextStyle(color: Colors.white,fontSize: 24),),
-                LinearProgressIndicator(value: CategoryModel.getCategories[index].taskCount/100,color: (index%2==0) ? MyColors().purple : MyColors().lightBlue, backgroundColor:MyColors().grey,)
-              ],
-            ),
+    children: [
+      Container(
+        margin: const EdgeInsets.only(right: 20),
+        width: 250,
+        height: 150,
+        decoration: BoxDecoration(
+          color: MyColors().darkBlue,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text('${categories[index].taskCount.toString()} tasks',style: TextStyle(color: MyColors().foregroundBlue.withOpacity(.6),fontSize: 18),),
+              Text(categories[index].title ,style: const TextStyle(color: Colors.white,fontSize: 24),),
+              LinearProgressIndicator(value: categories[index].taskCount/100,color: (index%2==0) ? MyColors().purple : MyColors().lightBlue, backgroundColor:MyColors().grey,)
+            ],
           ),
         ),
-      ],
-    );
+      ),
+    ],
+      );
   }
 }
 

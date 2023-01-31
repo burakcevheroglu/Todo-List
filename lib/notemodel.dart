@@ -1,5 +1,3 @@
-import 'dart:html';
-
 class NoteModel{
   String title;
   String description;
