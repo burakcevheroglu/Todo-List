@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todoapp/categorymodel.dart';
+import 'package:todoapp/notemodel.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -34,7 +36,7 @@ class MyHomePage extends StatelessWidget {
                   height: 150,
                   width: double.infinity,
                   child: ListView.builder(
-                    itemCount: 5,
+                    itemCount: CategoryModel.getCategories.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index){
                       return CategoryCard(index: index,);
@@ -43,16 +45,16 @@ class MyHomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20,),
                 Text("Categories",style: TextStyle(color: MyColors().foregroundBlue, fontSize: 16,fontWeight: FontWeight.w500),),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 SingleChildScrollView(
                   child: SizedBox(
                     width: double.infinity,
                     height: 400,
                     child: ListView.builder(
-                      itemCount: 5,
+                      itemCount: NoteModel.notes.length,
                       itemBuilder: (context, index){
                         return Container(
-                          margin: EdgeInsets.only(bottom: 15),
+                          margin: const EdgeInsets.only(bottom: 15),
                           height: 80,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
@@ -60,16 +62,21 @@ class MyHomePage extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2)
+                              InkWell(
+                                onTap: () => NoteModel.notes[index].completed = !NoteModel.notes[index].completed,
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                                  height: 30,
+                                  width: 30,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: (NoteModel.notes[index].completed) ? ((index%2==0) ? MyColors().purple : MyColors().lightBlue) : null,
+                                    border: (!NoteModel.notes[index].completed) ? Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2) : null
+                                  ),
+                                  child: (NoteModel.notes[index].completed) ? const Icon(Icons.check) : null,
                                 ),
                               ),
-                              const Expanded(child: Text('Daily Meeting with Team',style: TextStyle(color: Colors.white,fontSize: 18),))
+                              Expanded(child: Text(NoteModel.notes[index].title,style: const TextStyle(color: Colors.white,fontSize: 18),))
                             ],
                           ),
                         );
@@ -85,7 +92,7 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
 
-      floatingActionButton: FloatingActionButton(onPressed: (){},child: Icon(Icons.add),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),backgroundColor: MyColors().purple,),
+      floatingActionButton: FloatingActionButton(onPressed: (){},shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),backgroundColor: MyColors().purple,child: const Icon(Icons.add),),
     );
   }
 }
@@ -114,9 +121,9 @@ class CategoryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('40 task',style: TextStyle(color: MyColors().foregroundBlue.withOpacity(.6),fontSize: 18),),
-                const Text('Business',style: TextStyle(color: Colors.white,fontSize: 24),),
-                LinearProgressIndicator(value: .3,color: (index%2==0) ? MyColors().purple : MyColors().lightBlue, backgroundColor:MyColors().grey,)
+                Text('${CategoryModel.getCategories[index].taskCount.toString()} tasks',style: TextStyle(color: MyColors().foregroundBlue.withOpacity(.6),fontSize: 18),),
+                Text(CategoryModel.getCategories[index].title ,style: TextStyle(color: Colors.white,fontSize: 24),),
+                LinearProgressIndicator(value: CategoryModel.getCategories[index].taskCount/100,color: (index%2==0) ? MyColors().purple : MyColors().lightBlue, backgroundColor:MyColors().grey,)
               ],
             ),
           ),
