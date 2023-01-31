@@ -4,7 +4,6 @@ import 'package:todoapp/categorymodel.dart';
 import 'package:todoapp/notemodel.dart';
 
 final categoryProvider = Provider<List<CategoryModel>>((ref) => CategoryModel.getCategories);
-final noteProvider = Provider<List<NoteModel>>((ref) => NoteModel.getNotes);
 
 
 class MyHomePage extends StatelessWidget {
@@ -55,11 +54,17 @@ class MyHomePage extends StatelessWidget {
                   child: SizedBox(
                     width: double.infinity,
                     height: 400,
-                    child: ListView.builder(
-                      itemCount: NoteModel.notes.length,
-                      itemBuilder: (context, index){
-                        return NoteCard(index: index);
+                    child: Consumer(
+                      builder: (context, ref, child){
+                        final note = ref.watch(noteNotifierProvider);
+                        return ListView.builder(
+                          itemCount: note.notes.length,
+                          itemBuilder: (context, index){
+                            return NoteCard(index: index);
+                          },
+                        );
                       },
+
                     ),
                   ),
                 )
@@ -71,7 +76,15 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
 
-      floatingActionButton: FloatingActionButton(onPressed: (){},shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),backgroundColor: MyColors().purple,child: const Icon(Icons.add),),
+      floatingActionButton: Consumer(
+        builder: (context, ref, child){
+          final note = ref.watch(noteNotifierProvider);
+          return FloatingActionButton(onPressed: (){
+            note.addNote(NoteModel(title: 'New note!', description: 'Yes this is new note with riverpod!'));
+          },shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),backgroundColor: MyColors().purple,child: const Icon(Icons.add),);
+
+        }
+        ),
     );
   }
 }
@@ -84,7 +97,7 @@ class NoteCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(noteProvider);
+    final note = ref.watch(noteNotifierProvider);
 
 
     return Container(
@@ -97,20 +110,20 @@ class NoteCard extends ConsumerWidget {
       child: Row(
         children: [
           InkWell(
-            onTap: () => NoteModel.notes[index].completed = !NoteModel.notes[index].completed,
+            onTap: () {},
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               height: 30,
               width: 30,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
-                color: (notes[index].completed) ? ((index%2==0) ? MyColors().purple : MyColors().lightBlue) : null,
-                border: (!notes[index].completed) ? Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2) : null
+                color: (note.notes[index].completed) ? ((index%2==0) ? MyColors().purple : MyColors().lightBlue) : null,
+                border: (!note.notes[index].completed) ? Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2) : null
               ),
-              child: (notes[index].completed) ? const Icon(Icons.check) : null,
+              child: (note.notes[index].completed) ? const Icon(Icons.check) : null,
             ),
           ),
-          Expanded(child: Text(notes[index].title,style: const TextStyle(color: Colors.white,fontSize: 18),))
+          Expanded(child: Text(note.notes[index].title,style: const TextStyle(color: Colors.white,fontSize: 18),))
         ],
       ),
     );
