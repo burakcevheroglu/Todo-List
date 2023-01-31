@@ -4,6 +4,7 @@ import 'package:todoapp/categorymodel.dart';
 import 'package:todoapp/notemodel.dart';
 
 final categoryProvider = Provider<List<CategoryModel>>((ref) => CategoryModel.getCategories);
+final noteProvider = Provider<List<NoteModel>>((ref) => NoteModel.getNotes);
 
 
 class MyHomePage extends StatelessWidget {
@@ -48,7 +49,7 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20,),
-                Text("Categories",style: TextStyle(color: MyColors().foregroundBlue, fontSize: 16,fontWeight: FontWeight.w500),),
+                Text("TODAY'S TASKS",style: TextStyle(color: MyColors().foregroundBlue, fontSize: 16,fontWeight: FontWeight.w500),),
                 const SizedBox(height: 10,),
                 SingleChildScrollView(
                   child: SizedBox(
@@ -57,33 +58,7 @@ class MyHomePage extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: NoteModel.notes.length,
                       itemBuilder: (context, index){
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 15),
-                          height: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: MyColors().darkBlue
-                          ),
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: () => NoteModel.notes[index].completed = !NoteModel.notes[index].completed,
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                                  height: 30,
-                                  width: 30,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    color: (NoteModel.notes[index].completed) ? ((index%2==0) ? MyColors().purple : MyColors().lightBlue) : null,
-                                    border: (!NoteModel.notes[index].completed) ? Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2) : null
-                                  ),
-                                  child: (NoteModel.notes[index].completed) ? const Icon(Icons.check) : null,
-                                ),
-                              ),
-                              Expanded(child: Text(NoteModel.notes[index].title,style: const TextStyle(color: Colors.white,fontSize: 18),))
-                            ],
-                          ),
-                        );
+                        return NoteCard(index: index);
                       },
                     ),
                   ),
@@ -97,6 +72,47 @@ class MyHomePage extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(onPressed: (){},shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),backgroundColor: MyColors().purple,child: const Icon(Icons.add),),
+    );
+  }
+}
+
+class NoteCard extends ConsumerWidget {
+  final int index;
+  const NoteCard({
+    super.key, required this.index
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notes = ref.watch(noteProvider);
+
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 15),
+      height: 80,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: MyColors().darkBlue
+      ),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () => NoteModel.notes[index].completed = !NoteModel.notes[index].completed,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              height: 30,
+              width: 30,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: (notes[index].completed) ? ((index%2==0) ? MyColors().purple : MyColors().lightBlue) : null,
+                border: (!notes[index].completed) ? Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2) : null
+              ),
+              child: (notes[index].completed) ? const Icon(Icons.check) : null,
+            ),
+          ),
+          Expanded(child: Text(notes[index].title,style: const TextStyle(color: Colors.white,fontSize: 18),))
+        ],
+      ),
     );
   }
 }

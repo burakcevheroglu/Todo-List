@@ -11,7 +11,8 @@ class NoteModel{
     NoteModel(title: '2', description: "same as title", completed: true),
     NoteModel(title: '3', description: "same as title"),
     NoteModel(title: '4', description: "same as title"),
+    NoteModel(title: '5', description: "same as title"),
   ];
 
-  get getNotes => notes;
+  static List<NoteModel> get getNotes => notes;
 }

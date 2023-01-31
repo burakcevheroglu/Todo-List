@@ -1,4 +1,3 @@
-
 class CategoryModel{
   String title;
   int taskCount;
