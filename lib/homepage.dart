@@ -80,11 +80,12 @@ class MyHomePage extends StatelessWidget {
         builder: (context, ref, child){
           final note = ref.watch(noteNotifierProvider);
           return FloatingActionButton(onPressed: (){
-            note.addNote(NoteModel(title: 'New note!', description: 'Yes this is new note with riverpod!'));
+            note.addNote(NoteModel(id: note.notes.length,title: 'New note!   id:${note.notes.length}', description: 'Yes this is new note with riverpod!'));
           },shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),backgroundColor: MyColors().purple,child: const Icon(Icons.add),);
 
         }
         ),
+
     );
   }
 }
@@ -98,33 +99,46 @@ class NoteCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final note = ref.watch(noteNotifierProvider);
+    final myNote = note.notes[index];
 
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      height: 80,
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        color: MyColors().darkBlue
-      ),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              height: 30,
-              width: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: (note.notes[index].completed) ? ((index%2==0) ? MyColors().purple : MyColors().lightBlue) : null,
-                border: (!note.notes[index].completed) ? Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2) : null
-              ),
-              child: (note.notes[index].completed) ? const Icon(Icons.check) : null,
-            ),
+        onTap: (){},
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: MyColors().darkBlue
           ),
-          Expanded(child: Text(note.notes[index].title,style: const TextStyle(color: Colors.white,fontSize: 18),))
-        ],
+          child: Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  note.changeCompleted(note.notes[index]);
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  height: 30,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: (myNote.completed) ? ((index%2==0) ? MyColors().purple : MyColors().lightBlue) : null,
+                    border: (!myNote.completed) ? Border.all(color: (index%2==0) ? MyColors().purple : MyColors().lightBlue,width: 2) : null
+                  ),
+                  child: (myNote.completed) ? const Icon(Icons.check) : null,
+                ),
+              ),
+              Expanded(flex: 8, child: Text(myNote.title,style: (myNote.completed) ? const TextStyle(color: Colors.white,fontSize: 18, decoration: TextDecoration.lineThrough,decorationThickness: 2):
+              const TextStyle(color: Colors.white,fontSize: 18))),
+              Expanded(flex: 2, child: IconButton(onPressed: (){
+                note.removeNote(myNote);
+              }, icon: Icon(Icons.delete_outline,color: Colors.redAccent,),))
+            ],
+          ),
+        ),
       ),
     );
   }
