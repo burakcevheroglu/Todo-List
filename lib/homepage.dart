@@ -115,7 +115,9 @@ void addNewNote(NoteNotifier note) {
   note.addNote(NoteModel(
       id: note.notes.length,
       title: 'New note!   id:${note.notes.length}',
-      description: 'Yes this is new note with riverpod!'));
+      description: 'Yes this is new note with riverpod!',
+      date: DateTime.now(),
+  ));
 }
 
 class ZeroNoteWidget extends ConsumerWidget {
@@ -179,12 +181,11 @@ class NoteCard extends ConsumerWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () async {
-          await Navigator.push(
+          NoteModel result = await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => NoteDetails(note: myNote)));
-          note.changeCompleted(myNote);
-          note.changeCompleted(myNote);
+          note.makeChanges(myNote, result);
         },
         child: Container(
           height: 80,
