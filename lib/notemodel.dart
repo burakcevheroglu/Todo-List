@@ -11,6 +11,7 @@ class NoteModel{
 
   void completeReverse(){
     completed = !completed;
+    print(completed);
   }
 
   NoteModel({required this.id ,required this.title,required this.description, this.completed = false});
