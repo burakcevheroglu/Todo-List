@@ -179,7 +179,10 @@ class NoteCard extends ConsumerWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () async {
-          await Navigator.push(context, MaterialPageRoute(builder: (context) => NoteDetails(note: myNote)));
+          await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => NoteDetails(note: myNote)));
           note.changeCompleted(myNote);
           note.changeCompleted(myNote);
         },
@@ -217,15 +220,27 @@ class NoteCard extends ConsumerWidget {
               ),
               Expanded(
                   flex: 8,
-                  child: Text(myNote.title,
+                  child: (myNote.title.isEmpty)
+                      ? Text(
+                          myNote.description.substring(0, (myNote.description.length < 30) ? myNote.description.length : 30),
                       style: (myNote.completed)
                           ? const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              decoration: TextDecoration.lineThrough,
-                              decorationThickness: 2)
+                          color: Colors.white70,
+                          fontSize: 18,
+                          decoration: TextDecoration.lineThrough,
+                          decorationThickness: 2)
                           : const TextStyle(
-                              color: Colors.white, fontSize: 18))),
+                          color: Colors.white70, fontSize: 18),
+                        )
+                      : Text(myNote.title,
+                          style: (myNote.completed)
+                              ? const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  decoration: TextDecoration.lineThrough,
+                                  decorationThickness: 2)
+                              : const TextStyle(
+                                  color: Colors.white, fontSize: 18))),
               Expanded(
                   flex: 2,
                   child: IconButton(

@@ -21,7 +21,7 @@ class NoteDetails extends ConsumerWidget {
     return Scaffold(
       backgroundColor: MyColors().grey,
       appBar: AppBar(
-        title: Text(note.title),
+        title: (note.title.isNotEmpty) ? Text(note.title) : const Text('Note Details'),
         backgroundColor: MyColors().darkBlue,
       ),
       body: Padding(
